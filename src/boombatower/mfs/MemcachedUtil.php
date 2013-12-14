@@ -1,6 +1,6 @@
 <?php
 
-namespace com\boombatower\vfs;
+namespace boombatower\mfs;
 
 use org\bovigo\vfs\vfsStreamContent;
 
