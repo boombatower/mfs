@@ -7,7 +7,7 @@ use org\bovigo\vfs\vfsStreamContent;
 use org\bovigo\vfs\vfsStreamException;
 use org\bovigo\vfs\vfsStreamWrapper;
 
-class vfsStreamWrapperMemcached extends vfsStreamWrapper
+class mfsStreamWrapper extends vfsStreamWrapper
 {
   public static function register()
   {
@@ -17,8 +17,8 @@ class vfsStreamWrapperMemcached extends vfsStreamWrapper
       return;
     }
 
-    if (@stream_wrapper_register(vfsStreamMemcached::SCHEME, __CLASS__) === false) {
-      throw new vfsStreamException('A handler has already been registered for the ' . vfsStreamMemcached::SCHEME . ' protocol.');
+    if (@stream_wrapper_register(mfsStream::SCHEME, __CLASS__) === false) {
+      throw new vfsStreamException('A handler has already been registered for the ' . mfsStream::SCHEME . ' protocol.');
     }
 
     self::$registered = true;
@@ -37,7 +37,7 @@ class vfsStreamWrapperMemcached extends vfsStreamWrapper
     }
 
     $this->mode    = $this->calculateMode($mode, $extended);
-    $path          = $this->resolvePath(vfsStreamMemcached::path($path));
+    $path          = $this->resolvePath(mfsStream::path($path));
     $this->content = $this->getContentOfType($path, vfsStreamContent::TYPE_FILE);
     if (null !== $this->content) {
       if (self::WRITE === $mode) {
@@ -50,7 +50,7 @@ class vfsStreamWrapperMemcached extends vfsStreamWrapper
 
       if (
         (self::TRUNCATE === $mode || self::APPEND === $mode) &&
-        $this->content->isWritable(vfsStreamMemcached::getCurrentUser(), vfsStreamMemcached::getCurrentGroup()) === false
+        $this->content->isWritable(mfsStream::getCurrentUser(), mfsStream::getCurrentGroup()) === false
       ) {
         return false;
       }
@@ -60,7 +60,7 @@ class vfsStreamWrapperMemcached extends vfsStreamWrapper
       } elseif (self::APPEND === $mode) {
         $this->content->openForAppend();
       } else {
-        if (!$this->content->isReadable(vfsStreamMemcached::getCurrentUser(), vfsStreamMemcached::getCurrentGroup())) {
+        if (!$this->content->isReadable(mfsStream::getCurrentUser(), mfsStream::getCurrentGroup())) {
           if (($options & STREAM_REPORT_ERRORS) === STREAM_REPORT_ERRORS) {
             trigger_error('Permission denied', E_USER_WARNING);
           }
@@ -115,7 +115,7 @@ class vfsStreamWrapperMemcached extends vfsStreamWrapper
       return false;
     }
 
-    if ($dir->isWritable(vfsStreamMemcached::getCurrentUser(), vfsStreamMemcached::getCurrentGroup()) === false) {
+    if ($dir->isWritable(mfsStream::getCurrentUser(), mfsStream::getCurrentGroup()) === false) {
       if (($options & STREAM_REPORT_ERRORS) === STREAM_REPORT_ERRORS) {
         trigger_error('Can not create new file in non-writable path ' . $names['dirname'], E_USER_WARNING);
       }
@@ -123,26 +123,26 @@ class vfsStreamWrapperMemcached extends vfsStreamWrapper
       return false;
     }
 
-    return vfsStreamMemcached::newFile($names['basename'])->at($dir);
+    return mfsStream::newFile($names['basename'])->at($dir);
   }
 
   public function mkdir($path, $mode, $options)
   {
-    $umask = vfsStreamMemcached::umask();
+    $umask = mfsStream::umask();
     if (0 < $umask) {
       $permissions = $mode & ~$umask;
     } else {
       $permissions = $mode;
     }
 
-    $path = $this->resolvePath(vfsStreamMemcached::path($path));
+    $path = $this->resolvePath(mfsStream::path($path));
     if (null !== $this->getContent($path)) {
       trigger_error('mkdir(): Path memecached://' . $path . ' exists', E_USER_WARNING);
       return false;
     }
 
     if (null === self::$root) {
-      self::$root = vfsStreamMemcached::newDirectory($path, $permissions);
+      self::$root = mfsStream::newDirectory($path, $permissions);
       return true;
     }
 
@@ -163,7 +163,7 @@ class vfsStreamWrapperMemcached extends vfsStreamWrapper
 
     if (null === $dir
       || $dir->getType() !== vfsStreamContent::TYPE_DIR
-      || $dir->isWritable(vfsStreamMemcached::getCurrentUser(), vfsStreamMemcached::getCurrentGroup()) === false) {
+      || $dir->isWritable(mfsStream::getCurrentUser(), mfsStream::getCurrentGroup()) === false) {
       return false;
     }
 
@@ -172,7 +172,7 @@ class vfsStreamWrapperMemcached extends vfsStreamWrapper
       return false;
     }
 
-    vfsStreamMemcached::newDirectory($newDirs, $permissions)->at($dir);
+    mfsStream::newDirectory($newDirs, $permissions)->at($dir);
     return true;
   }
 }

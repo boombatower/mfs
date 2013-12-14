@@ -4,9 +4,9 @@ namespace boombatower\mfs;
 
 use org\bovigo\vfs\vfsStreamFile;
 
-class vfsStreamFileMemcached extends vfsStreamFile
+class mfsStreamFile extends vfsStreamFile
 {
-  use vfsStreamContentMemcachedTrait;
+  use mfsStreamContentTrait;
 
   public function open()
   {

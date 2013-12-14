@@ -2,7 +2,7 @@
 
 namespace boombatower\mfs;
 
-trait vfsStreamContentMemcachedTrait
+trait mfsStreamContentTrait
 {
   public function rename($newName)
   {
@@ -68,6 +68,6 @@ trait vfsStreamContentMemcachedTrait
 
   public function url()
   {
-    return vfsStreamMemcached::url($this->path());
+    return mfsStream::url($this->path());
   }
 }

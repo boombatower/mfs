@@ -4,9 +4,9 @@ namespace boombatower\mfs;
 
 use org\bovigo\vfs\vfsStreamDirectory;
 
-class vfsStreamDirectoryMemcached extends vfsStreamDirectory
+class mfsStreamDirectory extends vfsStreamDirectory
 {
-  use vfsStreamContentMemcachedTrait;
+  use mfsStreamContentTrait;
 
   // addChild() calls updateModifications() which will trigger a store() call.
 
